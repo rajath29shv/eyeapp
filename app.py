@@ -3,7 +3,7 @@ import tensorflow as tf
 import numpy as np
 import base64
 from io import BytesIO
-from flask import Flask, request, render_template
+import streamlit as st
 
 # Define the custom FixedDropout layer
 class FixedDropout(tf.keras.layers.Dropout):
@@ -48,19 +48,26 @@ def crop_image_from_gray(img, tol=7):
 # Load the trained model
 model = tf.keras.models.load_model('diabetic_retinopathy_detection_model.h5')
 
-# Initialize Flask app
-app = Flask(__name__)
+def predict_image(image):
+    return model(image)
 
-# Define the route for the home page
-@app.route('/', methods=['GET', 'POST'])
-def home():
-    if request.method == 'POST':
-        # Get the uploaded file
-        file = request.files['file']
+@st.cache(allow_output_mutation=True)
+def load_model():
+    return tf.keras.models.load_model('diabetic_retinopathy_detection_model.h5')
+
+# Initialize Streamlit app
+def main():
+    st.title("Diabetic Retinopathy Detection")
+    
+    # Upload image file
+    uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
+    
+    if uploaded_file is not None:
         # Save the uploaded file temporarily
         image_path = 'uploaded_image.jpg'
-        file.save(image_path)
-
+        with open(image_path, 'wb') as f:
+            f.write(uploaded_file.getvalue())
+        
         # Load the original uploaded image
         original_image = cv2.imread(image_path)
         original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
@@ -71,30 +78,25 @@ def home():
         # Reshape the image for model input
         input_image = np.expand_dims(preprocessed_image, axis=0)
 
+        # Load the model
+        model = load_model()
+
         # Make prediction
         prediction = predict_image(tf.convert_to_tensor(input_image))
         class_id = np.argmax(prediction)
         class_name = ['No DR', 'Mild', 'Moderate', 'Severe', 'Proliferative DR'][class_id]
 
-        # Convert images to base64 encoding
-        original_image_base64 = image_to_base64(original_image)
-        preprocessed_image_base64 = image_to_base64(preprocessed_image)
+        # Display the original and preprocessed images
+        st.subheader("Original Image")
+        st.image(original_image, use_column_width=True)
 
-        # Pass the necessary data to the HTML template
-        return render_template('result.html', original_image=original_image_base64, preprocessed_image=preprocessed_image_base64, class_name=class_name)
-    else:
-        return render_template('index.html')
+        st.subheader("Preprocessed Image")
+        st.image(preprocessed_image, use_column_width=True)
 
-@tf.function
-def predict_image(image):
-    return model(image)
+        # Display the predicted class
+        st.subheader("Prediction")
+        st.write(f"Class: {class_name}")
 
-def image_to_base64(image):
-    image_rgb = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-    _, buffer = cv2.imencode('.png', image_rgb)
-    image_base64 = base64.b64encode(buffer).decode('utf-8')
-    return image_base64
-
-# Run the Flask app
+# Run the Streamlit app
 if __name__ == '__main__':
-    app.run()
+    main()
