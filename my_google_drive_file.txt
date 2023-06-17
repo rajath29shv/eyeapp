@@ -1,0 +1,7 @@
+This is a placeholder file for my Google Drive file.
+
+This is a placeholder file for the Diabetic Retinopathy Detection Model.
+
+The actual model file is not stored in this repository due to its large size. 
+You can download the model file from the following location:
+https://drive.google.com/file/d/1G9VGiSTi4XmnD9n-1G0wHjMCFdJqq9Zp/view?usp=sharing
