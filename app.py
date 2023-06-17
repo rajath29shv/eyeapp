@@ -142,7 +142,7 @@ def main():
         else:
             st.warning("Please upload at least one image.")
 
-   if len(images) < 2:
+  if len(images) < 2:
         st.warning("Please upload at least 2 images.")
         
    # Print button
