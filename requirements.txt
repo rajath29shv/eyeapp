@@ -1,6 +1,17 @@
+<<<<<<< HEAD
 tensorflow
 flask
 keras
 pillow
 -U scikit-learn
 scipy
+=======
+tensorflow
+flask
+keras
+pillow
+scikit-learn==1.2.2
+scipy
+opencv-python-headless
+
+>>>>>>> da3b887a05eaa3edb5122c2caeb89ae407104bb0
