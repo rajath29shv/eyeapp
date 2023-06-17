@@ -5,3 +5,4 @@ pillow
 scikit-learn==1.2.2
 scipy
 opencv-python-headless
+gunicorn
