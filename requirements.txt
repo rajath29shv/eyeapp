@@ -4,4 +4,4 @@ keras
 pillow
 scikit-learn==1.2.2
 scipy
-opencv-python
+opencv-python==4.7.0.72
