@@ -1,3 +1,4 @@
+import os
 import cv2
 import tensorflow as tf
 import numpy as np
@@ -45,8 +46,17 @@ def crop_image_from_gray(img, tol=7):
             img = np.stack([img1, img2, img3], axis=-1)
         return img
 
-# Load the trained model
-model = tf.keras.models.load_model('diabetic_retinopathy_detection_model.h5')
+# Specify the path to download the model file
+model_path = 'diabetic_retinopathy_detection_model.h5'
+
+# Check if the model file already exists
+if not os.path.isfile(model_path):
+    # Download the model file from Google Cloud storage
+    os.system('https://drive.google.com/file/d/1G9VGiSTi4XmnD9n-1G0wHjMCFdJqq9Zp/view?usp=drive_link' + model_path)
+
+# Load the model
+model = tf.keras.models.load_model(model_path)
+
 
 # Initialize Flask app
 app = Flask(__name__)
