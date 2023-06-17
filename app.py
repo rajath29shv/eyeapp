@@ -4,7 +4,7 @@ import numpy as np
 import base64
 from io import BytesIO
 import streamlit as st
-from pdfdocument.document import PDFDocument
+from fpdf import FPDF
 
 # Define the custom FixedDropout layer
 class FixedDropout(tf.keras.layers.Dropout):
@@ -55,6 +55,27 @@ def predict_image(image):
 @st.cache(allow_output_mutation=True)
 def load_model():
     return tf.keras.models.load_model('diabetic_retinopathy_detection_model.h5')
+
+# Define a PDF generator class
+class PDF(FPDF):
+    def header(self):
+        self.set_font('Arial', 'B', 12)
+        self.cell(0, 10, 'Diabetic Retinopathy Detection', 0, 1, 'C')
+
+    def footer(self):
+        self.set_y(-15)
+        self.set_font('Arial', 'I', 8)
+        self.cell(0, 10, 'Page %s' % self.page_no(), 0, 0, 'C')
+
+    def chapter_title(self, title):
+        self.set_font('Arial', 'B', 12)
+        self.cell(0, 10, title, 0, 1, 'L')
+        self.ln(5)
+
+    def chapter_body(self, text):
+        self.set_font('Arial', '', 12)
+        self.multi_cell(0, 10, text)
+        self.ln(10)
  
 
 # Initialize Streamlit app
@@ -117,23 +138,25 @@ def main():
                 st.write(f"Prediction: {class_name}")
                 st.write("---")
         
-    # Print button
+   # Print button
     if st.button("Print"):
         st.write("Printing...")
         # Generate the PDF document
-        with PDFDocument("diabetic_retinopathy_report.pdf") as pdf:
-            for i, (original_image, preprocessed_image, class_name) in enumerate(images):
-                with pdf.create_page() as page:
-                    page.header("Diabetic Retinopathy Detection")
-                    page.image(original_image, width=150)
-                    page.image(preprocessed_image, width=150)
-                    page.text(f"Prediction: {class_name}")
+        pdf = PDF()
+        pdf.add_page()
+        
+        # Add the images and predictions to the PDF
+        for i, (original_image, preprocessed_image, class_name) in enumerate(images):
+            pdf.chapter_title(f"Image {i+1}")
+            pdf.image(original_image, w=150)
+            pdf.image(preprocessed_image, w=150)
+            pdf.chapter_body(f"Prediction: {class_name}")
+        
+        # Save the PDF file
+        pdf.output("diabetic_retinopathy_report.pdf", "F")
         
         # Provide a download link for the PDF file
         st.download_button("Download PDF", "diabetic_retinopathy_report.pdf")
         
-if __name__ == '__main__':
-    main()
-    
 if __name__ == '__main__':
     main()
