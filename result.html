@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Result</title>
+    <style>
+        .print-button {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .image-container {
+            display: flex;
+            justify-content:space-evenly;
+            align-items: stretch;
+            margin-top: 20px;
+        }
+        
+        .image-preview {
+           
+            margin-bottom: 20px;
+        }
+        
+        .preprocessed-image {
+           
+            margin-bottom: 20px;
+        }
+        @media print {
+            .print-button {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Diabetic Retinopathy Prediction: {{ class_name }}</h1>
+    <div class="image-container">
+        <div>
+            <h2>Original Image</h2>
+            <img src="data:image/png;base64,{{ original_image }}" id="image-preview" width="300" height="300">
+        </div>
+        <div>
+            <h2>Bens Preprocessed Image</h2>
+            <img src="data:image/png;base64,{{ preprocessed_image }}" id="preprocessed-image" width="300" height="300">
+        </div>
+    </div>
+ 
+    <div class="print-button">
+        <button onclick="window.print()">Print</button>
+    </div>
+</body>
+</html>
