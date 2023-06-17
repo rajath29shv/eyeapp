@@ -139,10 +139,8 @@ def main():
                 st.write(f"Prediction: {class_name}")
                 st.write("---")
 
-    if len(images) < 2:
-        st.subheader("Image 2")
-        st.write("No image uploaded")
-
+   if len(images) < 2:
+        st.warning("Please upload at least 2 images.")
         
    # Print button
     if st.button("Print"):
