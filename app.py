@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import cv2
 import tensorflow as tf
 import numpy as np
@@ -210,4 +209,3 @@ def image_to_base64(image):
 # Run the Flask app
 if __name__ == '__main__':
     app.run(debug=True)
->>>>>>> da3b887a05eaa3edb5122c2caeb89ae407104bb0
