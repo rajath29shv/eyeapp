@@ -59,44 +59,44 @@ def load_model():
 def main():
     st.title("Diabetic Retinopathy Detection")
     
-    # Upload image file
-    uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
+    # Upload image files
+    uploaded_files = st.file_uploader("Upload images", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
     
-    if uploaded_file is not None:
-        # Save the uploaded file temporarily
-        image_path = 'uploaded_image.jpg'
-        with open(image_path, 'wb') as f:
-            f.write(uploaded_file.getvalue())
-        
-        # Load the original uploaded image
-        original_image = cv2.imread(image_path)
-        original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
+    if uploaded_files:
+        # Process each uploaded image
+        for uploaded_file in uploaded_files:
+            # Save the uploaded file temporarily
+            image_path = 'uploaded_image.jpg'
+            with open(image_path, 'wb') as f:
+                f.write(uploaded_file.getvalue())
+            
+            # Load the original uploaded image
+            original_image = cv2.imread(image_path)
+            original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
 
-        # Preprocess the uploaded image
-        preprocessed_image = load_ben_color(image_path)
+            # Preprocess the uploaded image
+            preprocessed_image = load_ben_color(image_path)
 
-        # Reshape the image for model input
-        input_image = np.expand_dims(preprocessed_image, axis=0)
+            # Reshape the image for model input
+            input_image = np.expand_dims(preprocessed_image, axis=0)
 
-        # Load the model
-        model = load_model()
+            # Make prediction
+            prediction = predict_image(tf.convert_to_tensor(input_image))
+            class_id = np.argmax(prediction)
+            class_name = ['No DR', 'Mild', 'Moderate', 'Severe', 'Proliferative DR'][class_id]
 
-        # Make prediction
-        prediction = predict_image(tf.convert_to_tensor(input_image))
-        class_id = np.argmax(prediction)
-        class_name = ['No DR', 'Mild', 'Moderate', 'Severe', 'Proliferative DR'][class_id]
+            # Display the original and preprocessed images
+            st.subheader("Original Image")
+            st.image(original_image, use_column_width=True)
 
-        # Display the original and preprocessed images
-        st.subheader("Original Image")
-        st.image(original_image, use_column_width=True)
+            st.subheader("Preprocessed Image")
+            st.image(preprocessed_image, use_column_width=True)
 
-        st.subheader("Preprocessed Image")
-        st.image(preprocessed_image, use_column_width=True)
-
-        # Display the predicted class
-        st.subheader("Prediction")
-        st.write(f"Class: {class_name}")
-
+            # Display the predicted class
+            st.subheader("Prediction")
+            st.write(f"Class: {class_name}")
+            st.write("---")
+    
 # Run the Streamlit app
 if __name__ == '__main__':
     main()
