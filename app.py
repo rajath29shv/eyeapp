@@ -52,9 +52,10 @@ model = tf.keras.models.load_model('diabetic_retinopathy_detection_model.h5')
 def predict_image(image):
     return model(image)
 
-@st.cache_data(allow_output_mutation=True)
+@st.cache(allow_output_mutation=True)
 def load_model():
     return tf.keras.models.load_model('diabetic_retinopathy_detection_model.h5')
+
 
 # Define a PDF generator class
 class PDF(FPDF):
@@ -130,13 +131,17 @@ def main():
         
         # Display the images
         if len(images) > 0:
-            st.subheader("Uploaded Images")
-            for i, (original_image, preprocessed_image, class_name) in enumerate(images):
-                st.subheader(f"Image {i+1}")
-                st.image(original_image, use_column_width=True, caption="Original Image")
-                st.image(preprocessed_image, use_column_width=True, caption="Preprocessed Image")
-                st.write(f"Prediction: {class_name}")
-                st.write("---")
+    st.subheader("Uploaded Images")
+    for i, (original_image, preprocessed_image, class_name) in enumerate(images):
+        st.subheader(f"Image {i+1}")
+        st.image(original_image, use_column_width=True, caption="Original Image")
+        st.image(preprocessed_image, use_column_width=True, caption="Preprocessed Image")
+        st.write(f"Prediction: {class_name}")
+        st.write("---")
+    if len(images) < 2:
+        st.subheader("Image 2")
+        st.write("No image uploaded")
+
         
    # Print button
     if st.button("Print"):
