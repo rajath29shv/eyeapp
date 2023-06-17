@@ -1,0 +1,6 @@
+tensorflow
+flask
+keras
+pillow
+-U scikit-learn
+scipy
