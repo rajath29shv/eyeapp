@@ -160,5 +160,3 @@ def main():
         
 if __name__ == '__main__':
     main()
-
-when i use the use the above code,  and when i upload a single image, it is displaying two times
