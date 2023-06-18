@@ -70,10 +70,7 @@ st.markdown(
         .preprocessed-image {
             margin-bottom: 20px;
         }
-        .logo {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+        
     </style>
     """,
     unsafe_allow_html=True
@@ -109,15 +106,6 @@ def main():
             original_image_base64 = image_to_base64(original_image)
             preprocessed_image_base64 = image_to_base64(preprocessed_image)
             
-            # Display the logo
-            st.markdown(
-                """
-                <div class="logo">
-                    <img src="logonb.png" alt="Logo" width="200px" height="100px">
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
 
             # Display the images and prediction result
             st.markdown(
