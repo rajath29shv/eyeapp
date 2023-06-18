@@ -111,23 +111,20 @@ def run_app():
         unsafe_allow_html=True
     )
 
-    # Display the patient details input fields
-    st.header("Patient Details")
-
-    patient_name = st.text_input("Patient Name")
-    patient_gender = st.selectbox("Gender", ["Male", "Female", "Other"])
-    patient_age = st.number_input("Age", min_value=0, max_value=150)
-    patient_contact = st.text_input("Contact Number")
-
-    # Add a button to perform an action using the patient details
-    if st.button("Submit"):
-        # Perform action with the entered patient details
-        st.header("Output")
-        st.write(f"Patient Name: {patient_name}")
-        st.write(f"Gender: {patient_gender}")
-        st.write(f"Age: {patient_age}")
-        st.write(f"Contact Number: {patient_contact}")
-        st.write("Displaying output based on the entered patient details...")
+    # getting the input data from the user
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        Patient Name = st.text_input('Patient Name')
+        
+    with col2:
+        Gender = st.selectbox("Gender", ["Male", "Female", "Other"])
+    
+    with col1:
+        age = st.number_input("Age", min_value=0, max_value=150)
+    
+    with col2:
+        contact = st.text_input("Contact Number")
 
     @tf.function
     def predict_image(image):
