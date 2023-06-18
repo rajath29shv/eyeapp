@@ -51,6 +51,29 @@ model = tf.keras.models.load_model('diabetic_retinopathy_detection_model.h5')
 # Initialize Streamlit app
 st.title("Diabetic Retinopathy Detection")
 
+# Add the CSS styles
+st.markdown(
+    """
+    <style>
+        .image-container {
+            display: flex;
+            justify-content: space-evenly;
+            align-items: stretch;
+            margin-top: 20px;
+        }
+
+        .image-preview {
+            margin-bottom: 20px;
+        }
+
+        .preprocessed-image {
+            margin-bottom: 20px;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 # Define the main app logic
 def main():
     uploaded_files = st.file_uploader("Upload Images", accept_multiple_files=True)
@@ -82,9 +105,22 @@ def main():
             preprocessed_image_base64 = image_to_base64(preprocessed_image)
 
             # Display the images and prediction result
-            st.image(original_image, caption="Original Image", use_column_width=True)
-            st.image(preprocessed_image, caption="Preprocessed Image", use_column_width=True)
-            st.write("Prediction:", class_name)
+            st.markdown(
+                f"""
+                <h1>Diabetic Retinopathy Prediction: {class_name}</h1>
+                <div class="image-container">
+                    <div class="image-preview">
+                        <h2>Original Image</h2>
+                        <img src="data:image/png;base64,{original_image_base64}" id="image-preview" width="300" height="300">
+                    </div>
+                    <div class="preprocessed-image">
+                        <h2>Ben's Preprocessed Image</h2>
+                        <img src="data:image/png;base64,{preprocessed_image_base64}" id="preprocessed-image" width="300" height="300">
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
             st.write("---")
 
 @tf.function
