@@ -165,7 +165,7 @@ st.header("Patient Details")
 patient_name = st.text_input("Patient Name")
 patient_gender = st.selectbox("Gender", ["Male", "Female", "Other"])
 patient_age = st.number_input("Age", min_value=0, max_value=150, step=1)
-patient_contact = st.text_input("Contact Number", min_value=10, max_value=10)
+patient_contact = st.text_input("Contact Number")
 
 # Add a button to perform an action using the patient details
 if st.button("Submit"):
