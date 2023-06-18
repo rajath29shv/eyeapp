@@ -4,6 +4,8 @@ import numpy as np
 import base64
 from io import BytesIO
 import streamlit as st
+import streamlit_reports as sfr
+
 
 # Define the custom FixedDropout layer
 class FixedDropout(tf.keras.layers.Dropout):
@@ -85,6 +87,21 @@ def main():
             st.image(original_image, caption="Original Image", use_column_width=True)
             st.image(preprocessed_image, caption="Preprocessed Image", use_column_width=True)
             st.write("Prediction:", class_name)
+            st.write("---")
+            # Add a button for printing
+            if st.button('Print'):
+                # Generate the PDF report
+                report = sfr.Report()
+    
+                # Add images and text to the report
+                report.add_image(original_image, caption="Original Image")
+                report.add_image(preprocessed_image, caption="Preprocessed Image")
+                report.add_text("Prediction: " + class_name)
+    
+                # Save and display the PDF report
+                report.save_pdf("diabetic_retinopathy_report.pdf")
+                st.success("Report generated and saved as PDF.")
+    
             st.write("---")
 
 @tf.function
