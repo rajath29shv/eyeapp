@@ -148,7 +148,7 @@ logo_image_base64 = base64.b64encode(logo_image).decode("utf-8")
 
 # Display the title and logo
 st.markdown(
-    """
+    f"""
     <div class="title">
         <h1>WELCOME TO</h1>
         <div class="logo">
