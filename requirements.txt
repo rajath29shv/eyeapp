@@ -1,3 +1,4 @@
+pip==23.1.2
 tensorflow
 flask
 keras
