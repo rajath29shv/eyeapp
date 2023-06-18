@@ -141,7 +141,7 @@ def main():
 st.markdown(
     """
     <div class="logo">
-        <img src="logonb.png" alt="Logo">
+        <img src="README.md" alt="Logo">
     </div>
     """,
     unsafe_allow_html=True
