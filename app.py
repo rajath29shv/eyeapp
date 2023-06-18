@@ -60,7 +60,7 @@ st.markdown(
             justify-content: space-evenly;
             align-items: stretch;
             margin-top: 20px;
-            gap: 20;
+            gap: 10;
         }
 
         .image-preview {
@@ -114,11 +114,11 @@ def main():
                 <div class="image-container">
                     <div class="image-preview">
                         <h2>Original Image</h2>
-                        <img src="data:image/png;base64,{original_image_base64}" id="image-preview" width="200" height="200">
+                        <img src="data:image/png;base64,{original_image_base64}" id="image-preview" width="250" height="250">
                     </div>
                     <div class="preprocessed-image">
                         <h2>Ben's Processed Image</h2>
-                        <img src="data:image/png;base64,{preprocessed_image_base64}" id="preprocessed-image" width="200" height="200">
+                        <img src="data:image/png;base64,{preprocessed_image_base64}" id="preprocessed-image" width="250" height="250">
                     </div>
                 </div>
                 """,
