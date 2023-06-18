@@ -1,8 +1,9 @@
 import cv2
 import tensorflow as tf
 import numpy as np
-import streamlit as st
+import base64
 from io import BytesIO
+import streamlit as st
 
 # Define the custom FixedDropout layer
 class FixedDropout(tf.keras.layers.Dropout):
@@ -18,15 +19,13 @@ tf.keras.utils.get_custom_objects()['FixedDropout'] = FixedDropout
 
 input_shape = (224, 224, 3)
 
-def load_ben_color(image_bytes, sigmaX=10):
-    image_array = np.frombuffer(image_bytes.read(), np.uint8)
-    image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
+def load_ben_color(path, sigmaX=10):
+    image = cv2.imread(path)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     image = crop_image_from_gray(image)
     image = cv2.resize(image, (input_shape[0], input_shape[1]))
     image = cv2.addWeighted(image, 4, cv2.GaussianBlur(image, (0, 0), sigmaX), -4, 128)
     return image
-
 
 # Define the image cropping function (you can customize this based on your needs)
 def crop_image_from_gray(img, tol=7):
@@ -49,74 +48,58 @@ def crop_image_from_gray(img, tol=7):
 # Load the trained model
 model = tf.keras.models.load_model('diabetic_retinopathy_detection_model.h5')
 
-def predict_image(image):
-    return model(image)
-
-@st.cache(allow_output_mutation=True)
-def load_model():
-    return tf.keras.models.load_model('diabetic_retinopathy_detection_model.h5')
-
 # Initialize Streamlit app
+st.title("Diabetic Retinopathy Detection")
+
+# Define the main app logic
 def main():
-    st.title("Diabetic Retinopathy Detection")
-    
-    # Upload image files
-    uploaded_files = st.file_uploader("Upload images", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
+    uploaded_files = st.file_uploader("Upload Images", accept_multiple_files=True)
     
     if uploaded_files:
-        # Process each uploaded image
-        images = []
-        for uploaded_file in uploaded_files:
-            # Read image file as bytes
-            image_bytes = uploaded_file.read()
+        for file in uploaded_files:
+            # Save the uploaded file temporarily
+            image_path = 'uploaded_image.jpg'
+            with open(image_path, "wb") as f:
+                f.write(file.read())
 
             # Load the original uploaded image
-            original_image = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
+            original_image = cv2.imread(image_path)
             original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
 
             # Preprocess the uploaded image
-            preprocessed_image = load_ben_color(BytesIO(image_bytes))
+            preprocessed_image = load_ben_color(image_path)
 
             # Reshape the image for model input
             input_image = np.expand_dims(preprocessed_image, axis=0)
-
-            # Load the model
-            model = load_model()
 
             # Make prediction
             prediction = predict_image(tf.convert_to_tensor(input_image))
             class_id = np.argmax(prediction)
             class_name = ['No DR', 'Mild', 'Moderate', 'Severe', 'Proliferative DR'][class_id]
 
-            # Display the original and preprocessed images
-            st.subheader("Original Image")
-            st.image(original_image, use_column_width=True)
+            # Convert images to base64 encoding
+            original_image_base64 = image_to_base64(original_image)
+            preprocessed_image_base64 = image_to_base64(preprocessed_image)
 
-            st.subheader("Preprocessed Image")
-            st.image(preprocessed_image, use_column_width=True)
-
-            # Display the predicted class
-            st.subheader("Prediction")
-            st.write(f"Class: {class_name}")
+            # Display the images and prediction result
+            st.image(original_image, caption="Original Image", use_column_width=True)
+            st.image(preprocessed_image, caption="Preprocessed Image", use_column_width=True)
+            st.write("Prediction:", class_name)
             st.write("---")
+            
+            # Add a print button
+            if st.button("Print"):
+                st.write("Printing...")  # Replace this with the actual print logic
 
-            images.append((original_image, preprocessed_image, class_name))
+@tf.function
+def predict_image(image):
+    return model(image)
 
-        # Display the last two uploaded images
-        if len(images) >= 2:
-            st.subheader("Uploaded Images")
-            for i in range(len(images)-2, len(images)):
-                original_image, preprocessed_image, class_name = images[i]
-                st.subheader(f"Image {i+1}")
-                st.image(original_image, use_column_width=True, caption="Original Image")
-                st.image(preprocessed_image, use_column_width=True, caption="Preprocessed Image")
-                st.write(f"Prediction: {class_name}")
-                st.write("---")
-        else:
-            st.warning("Please upload at least two images.")
-    
-    else:
-        st.warning("Please upload some images.")
+def image_to_base64(image):
+    image_rgb = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+    _, buffer = cv2.imencode('.png', image_rgb)
+    image_base64 = base64.b64encode(buffer).decode('utf-8')
+    return image_base64
 
 # Run the Streamlit app
 if __name__ == '__main__':
