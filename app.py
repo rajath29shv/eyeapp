@@ -146,6 +146,7 @@ with open("logonb.png", "rb") as f:
 # Encode the logo image as base64
 logo_image_base64 = base64.b64encode(logo_image).decode("utf-8")
 
+
 # Display the title and logo
 st.markdown(
     """
