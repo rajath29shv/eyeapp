@@ -53,12 +53,14 @@ model = tf.keras.models.load_model('diabetic_retinopathy_detection_model.h5')
 st.markdown(
     """
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Baloo+Bhai+2:wght@400;600&display=swap');
         .image-container {
             display: flex;
             justify-content: space-evenly;
             align-items: stretch;
             margin-top: 20px;
             gap: 10;
+            font-family: 'Baloo Bhai 2' , sans-serif;
         }
 
         .image-preview {
@@ -82,6 +84,7 @@ st.markdown(
         .title {
             display: flex;
             align-items: center;
+            font-family: 'Baloo Bhai 2' , sans-serif;
         }
         
     </style>
