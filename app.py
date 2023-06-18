@@ -130,7 +130,7 @@ def main():
             # Add the preprocessed image
             doc.cell(0, 10, 'Preprocessed Image', 0, 1, 'L')
             doc.ln(10)
-            doc.image(preprocessed_image_path, x=10, y=130, w=180)
+            doc.image(image_path, x=10, y=130, w=180)
             doc.ln(100)
             
             # Add the prediction
