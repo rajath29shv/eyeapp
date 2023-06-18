@@ -18,13 +18,15 @@ tf.keras.utils.get_custom_objects()['FixedDropout'] = FixedDropout
 
 input_shape = (224, 224, 3)
 
-def load_ben_color(path, sigmaX=10):
-    image = cv2.imread(path)
+def load_ben_color(image_bytes, sigmaX=10):
+    image_array = np.frombuffer(image_bytes.read(), np.uint8)
+    image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     image = crop_image_from_gray(image)
     image = cv2.resize(image, (input_shape[0], input_shape[1]))
     image = cv2.addWeighted(image, 4, cv2.GaussianBlur(image, (0, 0), sigmaX), -4, 128)
     return image
+
 
 # Define the image cropping function (you can customize this based on your needs)
 def crop_image_from_gray(img, tol=7):
