@@ -86,10 +86,6 @@ def main():
             st.image(preprocessed_image, caption="Preprocessed Image", use_column_width=True)
             st.write("Prediction:", class_name)
             st.write("---")
-            
-            # Add a print button
-            if st.button("Print"):
-                st.write("Printing...")  # Replace this with the actual print logic
 
 @tf.function
 def predict_image(image):
