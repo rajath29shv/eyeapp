@@ -52,9 +52,10 @@ model = tf.keras.models.load_model('diabetic_retinopathy_detection_model.h5')
 def predict_image(image):
     return model(image)
 
-@st.cache(allow_output_mutation=True)
+@st.cache_data(allow_output_mutation=True)
 def load_model():
     return tf.keras.models.load_model('diabetic_retinopathy_detection_model.h5')
+
 
 
 # Define a PDF generator class
