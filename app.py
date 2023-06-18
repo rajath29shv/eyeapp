@@ -131,7 +131,7 @@ def main():
             images = images[-2:]
         
        # Display the images
-       # Display the images
+      # Display the images
         if len(images) > 0:
             st.subheader("Uploaded Images")
             for i, (original_image, preprocessed_image, class_name) in enumerate(images):
@@ -142,6 +142,17 @@ def main():
                 st.write("---")
         else:
             st.warning("Please upload at least one image.")
+            return  # Exit the function if no images are uploaded
+
+        # Display the last uploaded image
+        original_image, preprocessed_image, class_name = images[-1]
+
+        st.subheader("Uploaded Images")
+        st.subheader(f"Image {len(images)}")
+        st.image(original_image, use_column_width=True, caption="Original Image")
+        st.image(preprocessed_image, use_column_width=True, caption="Preprocessed Image")
+        st.write(f"Prediction: {class_name}")
+        st.write("---")
 
         if len(images) < 2:
             st.warning("Please upload at least 2 images.")
