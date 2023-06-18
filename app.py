@@ -92,7 +92,7 @@ st.markdown(
 
 # Define the main app logic
 def main():
-    uploaded_files = st.file_uploader("Upload Images to Detect Diabetic Retinopathy ", accept_multiple_files=True)
+    uploaded_files = st.file_uploader("Upload Images to detect Diabetic Retinopathy ", accept_multiple_files=True)
     
     if uploaded_files:
         for file in uploaded_files:
