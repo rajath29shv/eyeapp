@@ -4,7 +4,7 @@ import numpy as np
 import base64
 from io import BytesIO
 import streamlit as st
-import streamlit_reports as sfr
+
 
 
 # Define the custom FixedDropout layer
@@ -46,6 +46,13 @@ def crop_image_from_gray(img, tol=7):
             img3 = img[:, :, 2][np.ix_(mask.any(1), mask.any(0))]
             img = np.stack([img1, img2, img3], axis=-1)
         return img
+
+def show_pdf(file_path):
+    with open(file_path, "rb") as f:
+        base64_pdf = base64.b64encode(f.read()).decode('utf-8')
+    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="800" height="800" type="application/pdf"></iframe>'
+    st.markdown(pdf_display, unsafe_allow_html=True)
+
 
 # Load the trained model
 model = tf.keras.models.load_model('diabetic_retinopathy_detection_model.h5')
@@ -89,20 +96,28 @@ def main():
             st.write("Prediction:", class_name)
             st.write("---")
             # Add a button for printing
-            if st.button('Print'):
-                # Generate the PDF report
-                report = sfr.Report()
-    
-                # Add images and text to the report
-                report.add_image(original_image, caption="Original Image")
-                report.add_image(preprocessed_image, caption="Preprocessed Image")
-                report.add_text("Prediction: " + class_name)
-    
-                # Save and display the PDF report
-                report.save_pdf("diabetic_retinopathy_report.pdf")
-                st.success("Report generated and saved as PDF.")
-    
-            st.write("---")
+        if st.button('Print'):
+            # Generate the PDF report
+            pdf_path = "diabetic_retinopathy_report.pdf"
+
+            # Create a new PDF document
+            doc = PDFDocument(pdf_path)
+            doc.init_report()
+
+            # Add images and text to the report
+            doc.image(original_image, 10*cm, 10*cm, width=8*cm)
+            doc.image(preprocessed_image, 10*cm, 15*cm, width=8*cm)
+            doc.text("Prediction: " + class_name, 10*cm, 21*cm)
+
+            # Finalize and save the PDF document
+            doc.generate()
+
+            # Display the PDF report
+            show_pdf(pdf_path)
+
+            st.success("Report generated and displayed.")
+
+        st.write("---")
 
 @tf.function
 def predict_image(image):
