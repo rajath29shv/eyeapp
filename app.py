@@ -76,7 +76,7 @@ st.markdown(
         }
         
         .title .logo img {
-            width: 200px;
+            width: 100px;
             height: 100px;
         }
         .title {
