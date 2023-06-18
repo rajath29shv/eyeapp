@@ -69,13 +69,13 @@ st.markdown(
             margin-bottom: 20px;
         }
 
-        .logo {
+        .title .logo {
             display: flex;
             align-items: center;
             justify-content: flex-end;
         }
         
-        .logo img {
+        .title .logo img {
             width: 200px;
             height: 100px;
         }
@@ -139,13 +139,20 @@ def main():
             )
             st.write("---")
 
+# Read the logo image file
+with open("logonb.png", "rb") as f:
+    logo_image = f.read()
+
+# Encode the logo image as base64
+logo_image_base64 = base64.b64encode(logo_image).decode("utf-8")
+
 # Display the title and logo
 st.markdown(
     """
     <div class="title">
         <h1>WELCOME TO</h1>
         <div class="logo">
-            <img src="logonb.png" alt="Logo">
+            <img src="data:image/png;base64,{logo_image_base64}" alt="Logo">
         </div>
     </div>
     """,
