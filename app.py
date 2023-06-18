@@ -174,6 +174,14 @@ with col1:
 with col2:
     contact = st.text_input("Contact Number")
 
+# Add a button to perform an action using the patient details
+if st.button("Submit"):
+   # Perform action with the entered patient details
+     st.write(f"Patient Name: {name}")
+     st.write(f"Gender: {gender}")
+     st.write(f"Age: {age}")
+     st.write(f"Contact Number: {contact}")
+
 
 @tf.function
 def predict_image(image):
