@@ -159,29 +159,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Getting the input data from the user
-col1, col2 = st.columns(2)
-
-with col1:
-    name = st.text_input('Patient Name')
-
-with col2:
-    gender = st.selectbox("Gender", ["Male", "Female", "Other"])
-
-with col1:
-    age = st.number_input("Age")
-
-with col2:
-    contact = st.text_input("Contact Number")
-
-# Add a button to perform an action using the patient details
-if st.button("Submit"):
-   # Perform action with the entered patient details
-     st.write(f"Patient Name: {name}")
-     st.write(f"Gender: {gender}")
-     st.write(f"Age: {age}")
-     st.write(f"Contact Number: {contact}")
-
 
 @tf.function
 def predict_image(image):
