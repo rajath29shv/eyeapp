@@ -4,7 +4,6 @@ import numpy as np
 import base64
 from io import BytesIO
 import streamlit as st
-import streamlit_reports as sfr
 
 # Define the custom FixedDropout layer
 class FixedDropout(tf.keras.layers.Dropout):
@@ -45,7 +44,12 @@ def crop_image_from_gray(img, tol=7):
             img3 = img[:, :, 2][np.ix_(mask.any(1), mask.any(0))]
             img = np.stack([img1, img2, img3], axis=-1)
         return img
-
+# Define the function to show the PDF
+def show_pdf(file_path):
+    with open(file_path, "rb") as f:
+        base64_pdf = base64.b64encode(f.read()).decode('utf-8')
+    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="800" height="800" type="application/pdf"></iframe>'
+    st.markdown(pdf_display, unsafe_allow_html=True)
 # Load the trained model
 model = tf.keras.models.load_model('diabetic_retinopathy_detection_model.h5')
 
@@ -88,25 +92,15 @@ def main():
             st.write("Prediction:", class_name)
             st.write("---")
             
-            # Add the image and prediction result to the report page
-            page = sfr.Page()
-            page.image(original_image, caption="Original Image", use_column_width=True)
-            page.image(preprocessed_image, caption="Preprocessed Image", use_column_width=True)
-            page.write("Prediction:", class_name)
-
-            # Add the page to the list of pages
-            pages.append(page)
-
-        # Generate the report PDF
-        pdf = sfr.create_report(pages)
-
-        # Convert the PDF to base64 encoding
-        pdf_base64 = base64.b64encode(pdf).decode('utf-8')
-
-        # Create a download link for the PDF
-        href = f'<a href="data:application/pdf;base64,{pdf_base64}" download="report.pdf">Download Report</a>'
-        st.markdown(href, unsafe_allow_html=True)
-
+           # Display the images and prediction result
+            st.image(original_image, caption="Original Image", use_column_width=True)
+            st.image(preprocessed_image, caption="Preprocessed Image", use_column_width=True)
+            st.write("Prediction:", class_name)
+            st.write("---")
+            
+            # Add the "Print" button
+            if st.button("Print"):
+                show_pdf('post1-compressed.pdf')
 
 @tf.function
 def predict_image(image):
