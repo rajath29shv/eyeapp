@@ -90,103 +90,105 @@ st.markdown(
 )
 
 # Define the main app logic
-def main():
-    uploaded_files = st.file_uploader("Upload Images to Detect Diabetic Retnipathy ", accept_multiple_files=True)
-    
-    if uploaded_files:
-        for file in uploaded_files:
-            # Save the uploaded file temporarily
-            image_path = 'uploaded_image.jpg'
-            with open(image_path, "wb") as f:
-                f.write(file.read())
+def run_app():
+    # Read the logo image file
+    with open("logonb.png", "rb") as f:
+        logo_image = f.read()
 
-            # Load the original uploaded image
-            original_image = cv2.imread(image_path)
-            original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
+    # Encode the logo image as base64
+    logo_image_base64 = base64.b64encode(logo_image).decode("utf-8")
 
-            # Preprocess the uploaded image
-            preprocessed_image = load_ben_color(image_path)
-
-            # Reshape the image for model input
-            input_image = np.expand_dims(preprocessed_image, axis=0)
-
-            # Make prediction
-            prediction = predict_image(tf.convert_to_tensor(input_image))
-            class_id = np.argmax(prediction)
-            class_name = ['No DR', 'Mild', 'Moderate', 'Severe', 'Proliferative DR'][class_id]
-
-            # Convert images to base64 encoding
-            original_image_base64 = image_to_base64(original_image)
-            preprocessed_image_base64 = image_to_base64(preprocessed_image)
-            
-
-            # Display the images and prediction result
-            st.markdown(
-                f"""
-                <h1>Diabetic Retinopathy Prediction: {class_name}</h1>
-                <div class="image-container">
-                    <div class="image-preview">
-                        <h2>Original Image</h2>
-                        <img src="data:image/png;base64,{original_image_base64}" id="image-preview" width="250" height="250">
-                    </div>
-                    <div class="preprocessed-image">
-                        <h2>Ben's Processed Image</h2>
-                        <img src="data:image/png;base64,{preprocessed_image_base64}" id="preprocessed-image" width="250" height="250">
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-            st.write("---")
-
-# Read the logo image file
-with open("logonb.png", "rb") as f:
-    logo_image = f.read()
-
-# Encode the logo image as base64
-logo_image_base64 = base64.b64encode(logo_image).decode("utf-8")
-
-# Display the title and logo
-st.markdown(
-    f"""
-    <div class="title">
-        <h1>WELCOME TO</h1>
-        <div class="logo">
-            <img src="data:image/png;base64,{logo_image_base64}" alt="Logo">
+    # Display the title and logo
+    st.markdown(
+        f"""
+        <div class="title">
+            <h1>WELCOME TO</h1>
+            <div class="logo">
+                <img src="data:image/png;base64,{logo_image_base64}" alt="Logo">
+            </div>
         </div>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+        """,
+        unsafe_allow_html=True
+    )
 
-# Display the patient details input fields
-st.header("Patient Details")
+    # Display the patient details input fields
+    st.header("Patient Details")
 
-patient_name = st.text_input("Patient Name")
-patient_gender = st.selectbox("Gender", ["Male", "Female", "Other"])
-patient_age = st.number_input("Age", min_value=0, max_value=150)
-patient_contact = st.text_input("Contact Number")
+    patient_name = st.text_input("Patient Name")
+    patient_gender = st.selectbox("Gender", ["Male", "Female", "Other"])
+    patient_age = st.number_input("Age", min_value=0, max_value=150)
+    patient_contact = st.text_input("Contact Number")
 
-# Add a button to perform an action using the patient details
-if st.button("Submit"):
-    # Perform action with the entered patient details
-    st.header("Output")
-    st.write(f"Patient Name: {patient_name}")
-    st.write(f"Gender: {patient_gender}")
-    st.write(f"Age: {patient_age}")
-    st.write(f"Contact Number: {patient_contact}")
-    st.write("Displaying output based on the entered patient details...")
+    # Add a button to perform an action using the patient details
+    if st.button("Submit"):
+        # Perform action with the entered patient details
+        st.header("Output")
+        st.write(f"Patient Name: {patient_name}")
+        st.write(f"Gender: {patient_gender}")
+        st.write(f"Age: {patient_age}")
+        st.write(f"Contact Number: {patient_contact}")
+        st.write("Displaying output based on the entered patient details...")
 
-@tf.function
-def predict_image(image):
-    return model(image)
+    @tf.function
+    def predict_image(image):
+        return model(image)
 
-def image_to_base64(image):
-    image_rgb = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-    _, buffer = cv2.imencode('.png', image_rgb)
-    image_base64 = base64.b64encode(buffer).decode('utf-8')
-    return image_base64
+    def image_to_base64(image):
+        image_rgb = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        _, buffer = cv2.imencode('.png', image_rgb)
+        image_base64 = base64.b64encode(buffer).decode('utf-8')
+        return image_base64
 
-# Run the Streamlit app
-if __name__ == '__main__':
-    main()
+    def main():
+        uploaded_files = st.file_uploader("Upload Images to Detect Diabetic Retinopathy ", accept_multiple_files=True)
+        
+        if uploaded_files:
+            for file in uploaded_files:
+                # Save the uploaded file temporarily
+                image_path = 'uploaded_image.jpg'
+                with open(image_path, "wb") as f:
+                    f.write(file.read())
+
+                # Load the original uploaded image
+                original_image = cv2.imread(image_path)
+                original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
+
+                # Preprocess the uploaded image
+                preprocessed_image = load_ben_color(image_path)
+
+                # Reshape the image for model input
+                input_image = np.expand_dims(preprocessed_image, axis=0)
+
+                # Make prediction
+                prediction = predict_image(tf.convert_to_tensor(input_image))
+                class_id = np.argmax(prediction)
+                class_name = ['No DR', 'Mild', 'Moderate', 'Severe', 'Proliferative DR'][class_id]
+
+                # Convert images to base64 encoding
+                original_image_base64 = image_to_base64(original_image)
+                preprocessed_image_base64 = image_to_base64(preprocessed_image)
+
+                # Display the images and prediction result
+                st.markdown(
+                    f"""
+                    <h1>Diabetic Retinopathy Prediction: {class_name}</h1>
+                    <div class="image-container">
+                        <div class="image-preview">
+                            <h2>Original Image</h2>
+                            <img src="data:image/png;base64,{original_image_base64}" id="image-preview" width="250" height="250">
+                        </div>
+                        <div class="preprocessed-image">
+                            <h2>Ben's Processed Image</h2>
+                            <img src="data:image/png;base64,{preprocessed_image_base64}" id="preprocessed-image" width="250" height="250">
+                        </div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+                st.write("---")
+
+    # Run the Streamlit app
+    if __name__ == '__main__':
+        main()
+
+run_app()
