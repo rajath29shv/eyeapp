@@ -49,7 +49,7 @@ def crop_image_from_gray(img, tol=7):
 model = tf.keras.models.load_model('diabetic_retinopathy_detection_model.h5')
 
 # Initialize Streamlit app
-st.title("Diabetic Retinopathy Detection")
+st.title("WELCOME TO ")
 
 # Add the CSS styles
 st.markdown(
@@ -70,6 +70,17 @@ st.markdown(
         .preprocessed-image {
             margin-bottom: 20px;
         }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        
+        .logo img {
+            width: 200px;
+            height: 100px;
+        }
         
     </style>
     """,
@@ -78,7 +89,7 @@ st.markdown(
 
 # Define the main app logic
 def main():
-    uploaded_files = st.file_uploader("Upload Images", accept_multiple_files=True)
+    uploaded_files = st.file_uploader("Upload Images to Detect Diabetic Retnipathy ", accept_multiple_files=True)
     
     if uploaded_files:
         for file in uploaded_files:
@@ -125,6 +136,16 @@ def main():
                 unsafe_allow_html=True
             )
             st.write("---")
+
+# Display the logo
+st.markdown(
+    """
+    <div class="logo">
+        <img src="logonb.png" alt="Logo">
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 @tf.function
 def predict_image(image):
