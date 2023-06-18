@@ -155,6 +155,7 @@ def main():
 
     if len(images) < 2:
         st.warning("Please upload at least 2 images.")
+
         
    # Print button
     if st.button("Print"):
