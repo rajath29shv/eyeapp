@@ -140,8 +140,9 @@ def main():
             st.write(f"Prediction: {class_name}")
             st.write("---")
     else:
-        st.warning("Please upload at least one image.")
-        return  # Exit the function if no images are uploaded
+        else:
+            st.warning("Please upload at least one image.")
+            return  # Exit the function if no images are uploaded
 
     # Display the last uploaded image
     original_image, preprocessed_image, class_name = images[-1]
