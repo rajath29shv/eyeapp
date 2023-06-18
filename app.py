@@ -117,7 +117,7 @@ def main():
                         <img src="data:image/png;base64,{original_image_base64}" id="image-preview" width="300" height="300">
                     </div>
                     <div class="preprocessed-image">
-                        <h2>Ben's Preprocessed Image</h2>
+                        <h2>Ben's Processed Image</h2>
                         <img src="data:image/png;base64,{preprocessed_image_base64}" id="preprocessed-image" width="300" height="300">
                     </div>
                 </div>
