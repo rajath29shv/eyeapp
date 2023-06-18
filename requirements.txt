@@ -7,3 +7,5 @@ scipy
 opencv-python-headless
 gunicorn
 fpdf
+streamlit
+streamlit-reports
