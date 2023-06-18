@@ -1,10 +1,9 @@
-import streamlit as st
 import cv2
 import tensorflow as tf
 import numpy as np
 import base64
 from io import BytesIO
-from fpdf import FPDF
+import streamlit as st
 
 # Define the custom FixedDropout layer
 class FixedDropout(tf.keras.layers.Dropout):
@@ -49,26 +48,6 @@ def crop_image_from_gray(img, tol=7):
 # Load the trained model
 model = tf.keras.models.load_model('diabetic_retinopathy_detection_model.h5')
 
-# Define the PDF class
-class PDF(FPDF):
-    def header(self):
-        self.set_font('Arial', 'B', 12)
-        self.cell(0, 10, 'Diabetic Retinopathy Detection Report', 0, 1, 'C')
-        self.ln(20)
-
-    def footer(self):
-        self.set_y(-15)
-        self.set_font('Arial', 'I', 8)
-        self.cell(0, 10, f'Page {self.page_no()}', 0, 0, 'C')
-
-    def chapter_title(self, title):
-        self.set_font('Arial', 'B', 14)
-        self.cell(0, 10, title, 0, 1, 'L')
-        self.ln(10)
-
-    def image(self, img_path, x, y, w, h):
-        self.image(img_path, x=x, y=y, w=w, h=h)
-
 # Initialize Streamlit app
 st.title("Diabetic Retinopathy Detection")
 
@@ -102,25 +81,11 @@ def main():
             original_image_base64 = image_to_base64(original_image)
             preprocessed_image_base64 = image_to_base64(preprocessed_image)
 
-            # Generate the PDF report
-            pdf = PDF()
-            pdf.add_page()
-            pdf.chapter_title("Diabetic Retinopathy Detection Report")
-            pdf.image(image_path, x=10, y=30, w=180, h=0)
-            pdf.ln(60)
-            pdf.set_font('Arial', '', 12)
-            pdf.cell(0, 10, f"Prediction: {class_name}", 0, 1, 'L')
-
-            # Save the PDF report
-            report_filename = "diabetic_retinopathy_report.pdf"
-            pdf.output(report_filename, 'F')
-
             # Display the images and prediction result
             st.image(original_image, caption="Original Image", use_column_width=True)
             st.image(preprocessed_image, caption="Preprocessed Image", use_column_width=True)
             st.write("Prediction:", class_name)
             st.write("---")
-            st.markdown(get_pdf_download_link(report_filename), unsafe_allow_html=True)
 
 @tf.function
 def predict_image(image):
@@ -131,11 +96,6 @@ def image_to_base64(image):
     _, buffer = cv2.imencode('.png', image_rgb)
     image_base64 = base64.b64encode(buffer).decode('utf-8')
     return image_base64
-
-def get_pdf_download_link(file_path):
-    with open(file_path, "rb") as f:
-        base64_pdf = base64.b64encode(f.read()).decode('utf-8')
-    return f'<a href="data:application/octet-stream;base64,{base64_pdf}" download="{file_path}">Download PDF Report</a>'
 
 # Run the Streamlit app
 if __name__ == '__main__':
