@@ -2,6 +2,7 @@ import cv2
 import tensorflow as tf
 import numpy as np
 import base64
+from fpdf import FPDF
 from io import BytesIO
 import streamlit as st
 
@@ -47,11 +48,15 @@ def crop_image_from_gray(img, tol=7):
             img = np.stack([img1, img2, img3], axis=-1)
         return img
 
-def show_pdf(file_path):
-    with open(file_path, "rb") as f:
-        base64_pdf = base64.b64encode(f.read()).decode('utf-8')
-    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="800" height="800" type="application/pdf"></iframe>'
-    st.markdown(pdf_display, unsafe_allow_html=True)
+# Define the PDFDocument class
+class PDFDocument(FPDF):
+    def header(self):
+        # Add header logic if needed
+        pass
+
+    def footer(self):
+        # Add footer logic if needed
+        pass
 
 
 # Load the trained model
@@ -95,27 +100,53 @@ def main():
             st.image(preprocessed_image, caption="Preprocessed Image", use_column_width=True)
             st.write("Prediction:", class_name)
             st.write("---")
-            # Add a button for printing
+        # Add a button for printing
         if st.button('Print'):
             # Generate the PDF report
             pdf_path = "diabetic_retinopathy_report.pdf"
-
+        
             # Create a new PDF document
-            doc = PDFDocument(pdf_path)
-            doc.init_report()
-
+            doc = PDFDocument()
+            doc.set_auto_page_break(auto=True, margin=15)
+            
+            # Add the first page
+            doc.add_page()
+            
+            # Set the font and size
+            doc.set_font('Arial', 'B', 16)
+            
             # Add images and text to the report
-            doc.image(original_image, 10*cm, 10*cm, width=8*cm)
-            doc.image(preprocessed_image, 10*cm, 15*cm, width=8*cm)
-            doc.text("Prediction: " + class_name, 10*cm, 21*cm)
-
-            # Finalize and save the PDF document
-            doc.generate()
-
+            doc.cell(0, 10, 'Diabetic Retinopathy Report', 0, 1, 'C')
+            doc.ln(10)
+            
+            doc.set_font('Arial', '', 12)
+            
+            # Add the original image
+            doc.cell(0, 10, 'Original Image', 0, 1, 'L')
+            doc.ln(10)
+            doc.image(image_path, x=10, y=30, w=180)
+            doc.ln(100)
+            
+            # Add the preprocessed image
+            doc.cell(0, 10, 'Preprocessed Image', 0, 1, 'L')
+            doc.ln(10)
+            doc.image(preprocessed_image_path, x=10, y=130, w=180)
+            doc.ln(100)
+            
+            # Add the prediction
+            doc.cell(0, 10, 'Prediction', 0, 1, 'L')
+            doc.ln(10)
+            doc.cell(0, 10, class_name, 0, 1, 'L')
+            doc.ln(10)
+        
+            # Save the PDF document
+            doc.output(pdf_path)
+        
             # Display the PDF report
             show_pdf(pdf_path)
-
+        
             st.success("Report generated and displayed.")
+
 
         st.write("---")
 
