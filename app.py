@@ -88,50 +88,50 @@ def main():
     uploaded_files = st.file_uploader("Upload images (Max 2)", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
     
     if uploaded_files:
-        # Process each uploaded image
-        images = []
-        for uploaded_file in uploaded_files:
-            # Save the uploaded file temporarily
-            image_path = 'uploaded_image.jpg'
-            with open(image_path, 'wb') as f:
-                f.write(uploaded_file.getvalue())
-            
-            # Load the original uploaded image
-            original_image = cv2.imread(image_path)
-            original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
-            
-            # Preprocess the uploaded image
-            preprocessed_image = load_ben_color(image_path)
-            
-            # Reshape the image for model input
-            input_image = np.expand_dims(preprocessed_image, axis=0)
-            
-            # Make prediction
-            model = load_model()
-            prediction = predict_image(tf.convert_to_tensor(input_image))
-            class_id = np.argmax(prediction)
-            class_name = ['No DR', 'Mild', 'Moderate', 'Severe', 'Proliferative DR'][class_id]
-            
-            # Display the original and preprocessed images
-            st.subheader("Original Image")
-            st.image(original_image, use_column_width=True)
-            
-            st.subheader("Preprocessed Image")
-            st.image(preprocessed_image, use_column_width=True)
-            
-            # Display the predicted class
-            st.subheader("Prediction")
-            st.write(f"Class: {class_name}")
-            st.write("---")
-            
-            images.append((original_image, preprocessed_image, class_name))
-        
-        # Clear images if more than 2 are uploaded
-        if len(images) > 2:
-            images = images[-2:]
-        
-       # Display the images
-        if len(images) > 0:
+    # Process each uploaded image
+    images = []
+    for uploaded_file in uploaded_files:
+        # Save the uploaded file temporarily
+        image_path = 'uploaded_image.jpg'
+        with open(image_path, 'wb') as f:
+            f.write(uploaded_file.getvalue())
+
+        # Load the original uploaded image
+        original_image = cv2.imread(image_path)
+        original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
+
+        # Preprocess the uploaded image
+        preprocessed_image = load_ben_color(image_path)
+
+        # Reshape the image for model input
+        input_image = np.expand_dims(preprocessed_image, axis=0)
+
+        # Make prediction
+        model = load_model()
+        prediction = predict_image(tf.convert_to_tensor(input_image))
+        class_id = np.argmax(prediction)
+        class_name = ['No DR', 'Mild', 'Moderate', 'Severe', 'Proliferative DR'][class_id]
+
+        # Display the original and preprocessed images
+        st.subheader("Original Image")
+        st.image(original_image, use_column_width=True)
+
+        st.subheader("Preprocessed Image")
+        st.image(preprocessed_image, use_column_width=True)
+
+        # Display the predicted class
+        st.subheader("Prediction")
+        st.write(f"Class: {class_name}")
+        st.write("---")
+
+        images.append((original_image, preprocessed_image, class_name))
+
+    # Clear images if more than 2 are uploaded
+    if len(images) > 2:
+        images = images[-2:]
+
+    # Display the images
+    if len(images) > 0:
         st.subheader("Uploaded Images")
         for i, (original_image, preprocessed_image, class_name) in enumerate(images):
             st.subheader(f"Image {i+1}")
@@ -143,10 +143,18 @@ def main():
         st.warning("Please upload at least one image.")
         return  # Exit the function if no images are uploaded
 
+    # Display the last uploaded image
+    original_image, preprocessed_image, class_name = images[-1]
 
-            if len(images) < 2:
-                st.warning("Please upload at least 2 images.")
+    st.subheader("Uploaded Images")
+    st.subheader(f"Image {len(images)}")
+    st.image(original_image, use_column_width=True, caption="Original Image")
+    st.image(preprocessed_image, use_column_width=True, caption="Preprocessed Image")
+    st.write(f"Prediction: {class_name}")
+    st.write("---")
 
+    if len(images) < 2:
+        st.warning("Please upload at least 2 images.")
         
    # Print button
     if st.button("Print"):
