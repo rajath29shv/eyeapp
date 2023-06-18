@@ -49,17 +49,16 @@ def crop_image_from_gray(img, tol=7):
 model = tf.keras.models.load_model('diabetic_retinopathy_detection_model.h5')
 
 
-# Define the CSS style block
-css = """
+# Add the CSS styles
+st.markdown(
+    """
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Baloo+Bhai+2:wght@400;600&display=swap');
         .image-container {
             display: flex;
             justify-content: space-evenly;
             align-items: stretch;
             margin-top: 20px;
             gap: 10;
-            font-family: 'Baloo Bhai 2', sans-serif;
         }
 
         .image-preview {
@@ -75,22 +74,21 @@ css = """
             align-items: center;
             justify-content: flex-end;
         }
-
+        
         .title .logo img {
             width: 100px;
             height: 100px;
         }
-
         .title {
             display: flex;
             align-items: center;
-            font-family: 'Baloo Bhai 2', sans-serif;
         }
+        
     </style>
-"""
+    """,
+    unsafe_allow_html=True
+)
 
-# Display the CSS style block
-st.markdown(css, unsafe_allow_html=True)
 
 # Define the main app logic
 def main():
