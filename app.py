@@ -60,7 +60,7 @@ st.markdown(
             justify-content: space-evenly;
             align-items: stretch;
             margin-top: 20px;
-            gap: 10;
+            gap: 20;
         }
 
         .image-preview {
