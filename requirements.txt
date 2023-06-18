@@ -8,3 +8,4 @@ opencv-python-headless
 gunicorn
 fpdf
 streamlit
+streamlit_reports
