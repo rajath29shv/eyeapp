@@ -115,7 +115,7 @@ def run_app():
     col1, col2 = st.columns(2)
     
     with col1:
-        Patient Name = st.text_input('Patient Name')
+        Name = st.text_input('Patient Name')
         
     with col2:
         Gender = st.selectbox("Gender", ["Male", "Female", "Other"])
