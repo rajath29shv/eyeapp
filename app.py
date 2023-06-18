@@ -1,10 +1,8 @@
 import cv2
 import tensorflow as tf
 import numpy as np
-import base64
-from io import BytesIO
 import streamlit as st
-from fpdf import FPDF
+from io import BytesIO
 
 # Define the custom FixedDropout layer
 class FixedDropout(tf.keras.layers.Dropout):
@@ -56,107 +54,68 @@ def predict_image(image):
 def load_model():
     return tf.keras.models.load_model('diabetic_retinopathy_detection_model.h5')
 
-# Define a PDF generator class
-class PDF(FPDF):
-    def header(self):
-        self.set_font('Arial', 'B', 12)
-        self.cell(0, 10, 'Diabetic Retinopathy Detection', 0, 1, 'C')
-
-    def footer(self):
-        self.set_y(-15)
-        self.set_font('Arial', 'I', 8)
-        self.cell(0, 10, 'Page %s' % self.page_no(), 0, 0, 'C')
-
-    def chapter_title(self, title):
-        self.set_font('Arial', 'B', 12)
-        self.cell(0, 10, title, 0, 1, 'L')
-        self.ln(5)
-
-    def chapter_body(self, text):
-        self.set_font('Arial', '', 12)
-        self.multi_cell(0, 10, text)
-        self.ln(10)
- 
-
 # Initialize Streamlit app
 def main():
     st.title("Diabetic Retinopathy Detection")
     
     # Upload image files
-    uploaded_files = st.file_uploader("Upload images (Max 2)", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
+    uploaded_files = st.file_uploader("Upload images", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
     
     if uploaded_files:
         # Process each uploaded image
         images = []
         for uploaded_file in uploaded_files:
-            # Save the uploaded file temporarily
-            image_path = 'uploaded_image.jpg'
-            with open(image_path, 'wb') as f:
-                f.write(uploaded_file.getvalue())
-            
+            # Read image file as bytes
+            image_bytes = uploaded_file.read()
+
             # Load the original uploaded image
-            original_image = cv2.imread(image_path)
+            original_image = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
             original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
-            
+
             # Preprocess the uploaded image
-            preprocessed_image = load_ben_color(image_path)
-            
+            preprocessed_image = load_ben_color(BytesIO(image_bytes))
+
             # Reshape the image for model input
             input_image = np.expand_dims(preprocessed_image, axis=0)
-            
-            # Make prediction
+
+            # Load the model
             model = load_model()
+
+            # Make prediction
             prediction = predict_image(tf.convert_to_tensor(input_image))
             class_id = np.argmax(prediction)
             class_name = ['No DR', 'Mild', 'Moderate', 'Severe', 'Proliferative DR'][class_id]
-            
+
             # Display the original and preprocessed images
             st.subheader("Original Image")
             st.image(original_image, use_column_width=True)
-            
+
             st.subheader("Preprocessed Image")
             st.image(preprocessed_image, use_column_width=True)
-            
+
             # Display the predicted class
             st.subheader("Prediction")
             st.write(f"Class: {class_name}")
             st.write("---")
-            
+
             images.append((original_image, preprocessed_image, class_name))
-        
-        # Clear images if more than 2 are uploaded
-        if len(images) > 2:
-            images = images[-2:]
-        
-        # Display the images
-        if len(images) > 0:
+
+        # Display the last two uploaded images
+        if len(images) >= 2:
             st.subheader("Uploaded Images")
-            for i, (original_image, preprocessed_image, class_name) in enumerate(images):
+            for i in range(len(images)-2, len(images)):
+                original_image, preprocessed_image, class_name = images[i]
                 st.subheader(f"Image {i+1}")
                 st.image(original_image, use_column_width=True, caption="Original Image")
                 st.image(preprocessed_image, use_column_width=True, caption="Preprocessed Image")
                 st.write(f"Prediction: {class_name}")
                 st.write("---")
-        
-   # Print button
-    if st.button("Print"):
-        st.write("Printing...")
-        # Generate the PDF document
-        pdf = PDF()
-        pdf.add_page()
-        
-        # Add the images and predictions to the PDF
-        for i, (original_image, preprocessed_image, class_name) in enumerate(images):
-            pdf.chapter_title(f"Image {i+1}")
-            pdf.image(original_image, w=150)
-            pdf.image(preprocessed_image, w=150)
-            pdf.chapter_body(f"Prediction: {class_name}")
-        
-        # Save the PDF file
-        pdf.output("diabetic_retinopathy_report.pdf", "F")
-        
-        # Provide a download link for the PDF file
-        st.download_button("Download PDF", "diabetic_retinopathy_report.pdf")
-        
+        else:
+            st.warning("Please upload at least two images.")
+    
+    else:
+        st.warning("Please upload some images.")
+
+# Run the Streamlit app
 if __name__ == '__main__':
     main()
