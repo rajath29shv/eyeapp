@@ -81,6 +81,10 @@ st.markdown(
             width: 200px;
             height: 100px;
         }
+        .title {
+            display: flex;
+            align-items: center;
+        }
         
     </style>
     """,
@@ -144,11 +148,14 @@ with open("logonb.png", "rb") as f:
 # Encode the logo image as base64
 logo_image_base64 = base64.b64encode(logo_image).decode("utf-8")
 
-# Display the logo
+# Display the title and logo
 st.markdown(
-    f"""
-    <div class="logo">
-        <img src="data:image/png;base64,{logo_image_base64}" alt="Logo">
+    """
+    <div class="title">
+        <h1>WELCOME TO</h1>
+        <div class="logo">
+            <img src="data:image/png;base64,{logo_image_base64}" alt="Logo">
+        </div>
     </div>
     """,
     unsafe_allow_html=True
