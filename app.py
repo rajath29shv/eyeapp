@@ -4,6 +4,7 @@ import numpy as np
 import base64
 from io import BytesIO
 import streamlit as st
+import streamlit_reports as sfr
 
 # Define the custom FixedDropout layer
 class FixedDropout(tf.keras.layers.Dropout):
@@ -86,6 +87,26 @@ def main():
             st.image(preprocessed_image, caption="Preprocessed Image", use_column_width=True)
             st.write("Prediction:", class_name)
             st.write("---")
+            
+            # Add the image and prediction result to the report page
+            page = sfr.Page()
+            page.image(original_image, caption="Original Image", use_column_width=True)
+            page.image(preprocessed_image, caption="Preprocessed Image", use_column_width=True)
+            page.write("Prediction:", class_name)
+
+            # Add the page to the list of pages
+            pages.append(page)
+
+        # Generate the report PDF
+        pdf = sfr.create_report(pages)
+
+        # Convert the PDF to base64 encoding
+        pdf_base64 = base64.b64encode(pdf).decode('utf-8')
+
+        # Create a download link for the PDF
+        href = f'<a href="data:application/pdf;base64,{pdf_base64}" download="report.pdf">Download Report</a>'
+        st.markdown(href, unsafe_allow_html=True)
+
 
 @tf.function
 def predict_image(image):
