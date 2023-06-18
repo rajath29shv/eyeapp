@@ -48,8 +48,6 @@ def crop_image_from_gray(img, tol=7):
 # Load the trained model
 model = tf.keras.models.load_model('diabetic_retinopathy_detection_model.h5')
 
-# Initialize Streamlit app
-st.title("WELCOME TO ")
 
 # Add the CSS styles
 st.markdown(
