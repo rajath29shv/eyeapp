@@ -137,11 +137,18 @@ def main():
             )
             st.write("---")
 
+# Read the logo image file
+with open("logonb.png", "rb") as f:
+    logo_image = f.read()
+
+# Encode the logo image as base64
+logo_image_base64 = base64.b64encode(logo_image).decode("utf-8")
+
 # Display the logo
 st.markdown(
-    """
+    f"""
     <div class="logo">
-        <img src="README.md" alt="Logo">
+        <img src="data:image/png;base64,{logo_image_base64}" alt="Logo">
     </div>
     """,
     unsafe_allow_html=True
